@@ -3,6 +3,7 @@
 Automatic login or log out.
 Also after execution, it stores your login/logout time in a CSV sheet.
 Insert in the timeclocker_config.ini your account data and URL.
+Run the install script
 
 Start with batch script or powershell.
 You need to give one arg that represents the call that the script should do.
