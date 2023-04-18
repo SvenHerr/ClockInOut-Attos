@@ -53,8 +53,8 @@ def waitUnitElementsAreVisible(by = By.ID, elements = ''):
 def connect():
     global browser
     #make headless for more convinient
-    if useHeadless:
-        options = Options()
+    options = Options()
+    if useHeadless == 'True':
         options.add_argument('--headless')
         # disable annoying logmessage if headless
         options.add_argument("--log-level=3") 
@@ -227,7 +227,7 @@ if __name__ == '__main__':
         else: 
             raise ValueError('No args')
         
-        if isCSVEnabled:
+        if isCSVEnabled == 'True':
             getBookedTime()
             storeTimeToCSV()        
 
