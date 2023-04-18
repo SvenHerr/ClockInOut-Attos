@@ -56,6 +56,9 @@ def connect():
     if useHeadless:
         options = Options()
         options.add_argument('--headless')
+        # disable annoying logmessage if headless
+        options.add_argument("--log-level=3") 
+        options.add_experimental_option('excludeSwitches', ['enable-logging'])
     browser = webdriver.Chrome(options=options, service=Service(ChromeDriverManager().install()))
     browser.get(url)
     browser.maximize_window()	
