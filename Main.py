@@ -56,7 +56,7 @@ def connect():
     if useHeadless:
         options = Options()
         options.add_argument('--headless')
-    browser = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
+    browser = webdriver.Chrome(options=options, service=Service(ChromeDriverManager().install()))
     browser.get(url)
     browser.maximize_window()	
     browser.implicitly_wait(2)
@@ -109,7 +109,6 @@ def clickAcceptButton():
     ActionChains(browser).click(buttonElements[0]).perform()
 
 def getBookedTime():
-    browser.implicitly_wait(2)
     labelForVerbuchteZeit = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[1]/td/div/div/table/tbody/tr[5]/td[3]/div')
     
     global actuallyBookedTime
@@ -117,6 +116,42 @@ def getBookedTime():
         actuallyBookedTime = labelForVerbuchteZeit.text
     else:
         actuallyBookedTime ='error'
+
+def getFlexTimeLabelName():
+    flexTimeLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[1]/td[3]/div/span')
+    if flexTimeLabel is not None:
+        return flexTimeLabel.text
+    return "Not found!"
+
+def getFlexTime():
+    labelForFlexTime = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[1]/td[5]/div/span')
+    if labelForFlexTime is not None:
+        return labelForFlexTime.text
+    return "Not found!"
+
+def getVacationDaysLabelName():
+    vacationDaysLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[3]/td[3]/div/span')
+    if vacationDaysLabel is not None:
+        return vacationDaysLabel.text
+    return "Not found!"
+
+def getVacationDays():
+    labelForVacationDays = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[3]/td[5]/div/span')
+    if labelForVacationDays is not None:
+        return labelForVacationDays.text
+    return "Not found!"
+
+def getOldVacationDaysLabelName():
+    oldVacationDaysLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[5]/td[3]/div/span')
+    if oldVacationDaysLabel is not None:
+        return oldVacationDaysLabel.text
+    return "Not found!"
+
+def getOldVacationDays():
+    labelForOldVacationDays = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[5]/td[5]/div/span')
+    if labelForOldVacationDays is not None:
+        return labelForOldVacationDays.text
+    return "Not found!"
 
 def storeTimeToCSV():
     global now
@@ -132,7 +167,6 @@ def storeTimeToCSV():
         writer.writerow(data)
 
 def quit():
-    browser.switch_to.default_content()
     browser.quit()
 
 def sendMail(subject, body):
@@ -182,6 +216,9 @@ if __name__ == '__main__':
 
         if call == 'salden':
             clickSaldenButton()
+            print(getFlexTimeLabelName() + " " + getFlexTime())
+            print(getVacationDaysLabelName() + " " + getVacationDays())
+            print(getOldVacationDaysLabelName() + " " + getOldVacationDays())
         elif call == 'out' or call == 'in':
             clickAcceptButton()
         else: 
@@ -191,10 +228,11 @@ if __name__ == '__main__':
             getBookedTime()
             storeTimeToCSV()
 
-        subject = "Time booked!"
-        body = selectText + "actually booked time: "+ actuallyBookedTime + ". Should have booked time: " + str(now)
+        
 
         if isEmailEnabled == 'True':
+            subject = "Time booked!"
+            body = selectText + "actually booked time: "+ actuallyBookedTime + ". Should have booked time: " + str(now)
             sendMail(subject, body)
     except Exception as ex:
         if isEmailEnabled == 'True':
@@ -203,3 +241,4 @@ if __name__ == '__main__':
         exit(1)
 
     quit()
+    exit(0)
