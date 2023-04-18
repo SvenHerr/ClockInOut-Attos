@@ -47,6 +47,9 @@ else:
 def waitUnitElementIsVisible(by = By.ID, element = ''):
     return WebDriverWait(browser, timeout).until(EC.presence_of_element_located((by, element)))
 
+def waitUnitElementsAreVisible(by = By.ID, elements = ''):
+    return WebDriverWait(browser, timeout).until(EC.presence_of_all_elements_located((by, elements)))
+
 def connect():
     global browser
     #make headless for more convinient
@@ -62,10 +65,10 @@ def switchToIframe():
     iframe_ref = waitUnitElementIsVisible(By.TAG_NAME, 'iframe')
     browser.switch_to.frame(iframe_ref)
 
-def getInputElements():
+def setInputElements():
     global inputElements
-    inputElements = waitUnitElementIsVisible(By.TAG_NAME, 'input')
-    if len(inputElements) <= 1: 
+    inputElements = waitUnitElementsAreVisible(By.TAG_NAME, 'input')
+    if inputElements == None: 
         raise Exception("No input elements found!")
 
 def insertAccoutNumber():
@@ -76,7 +79,7 @@ def insertPw():
 
 def setSelectElements():
     global selectedElements
-    selectedElements = waitUnitElementIsVisible(By.TAG_NAME, 'select')
+    selectedElements = waitUnitElementsAreVisible(By.TAG_NAME, 'select')
     if selectedElements == None: 
         raise Exception("No input elements found!")
 
@@ -159,14 +162,17 @@ if __name__ == '__main__':
         if len(sys.argv) > 1:
             global call
             call = sys.argv[1]
+        else:
+            call =""
+            #raise Exception("No args provided!")
     except Exception as ex:
         print(ex)
         exit(1)
 
     try:
-        browser = connect()
+        connect()
         switchToIframe()
-        elements = getInputElements()
+        setInputElements()
         insertAccoutNumber()
         insertPw()
         setSelectElements()
