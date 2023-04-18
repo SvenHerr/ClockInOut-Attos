@@ -198,7 +198,7 @@ if __name__ == '__main__':
             call = sys.argv[1]
         else:
             call =""
-            #raise Exception("No args provided!")
+            raise Exception("No args provided!")
     except Exception as ex:
         print(ex)
         exit(1)
@@ -226,9 +226,7 @@ if __name__ == '__main__':
         
         if isCSVEnabled:
             getBookedTime()
-            storeTimeToCSV()
-
-        
+            storeTimeToCSV()        
 
         if isEmailEnabled == 'True':
             subject = "Time booked!"
