@@ -37,7 +37,7 @@ if os.path.isfile(str(os.getcwd()) + "/timeclocker_config.ini"):
     timeout = config["Settings"]["timeout"]
     useHeadless = config["Settings"]["useheadless"]
 else:
-    config["Mail-Setting"] = {"username":'', "password":'', "sender":'', "reciever":'', "smtperver":'smtp.web.de'}
+    config["Mail-Setting"] = {"username":'', "password":'', "sender":'', "reciever":'', "smtpserver":'smtp.web.de'}
     config["Account-Settings"] = {"usenameAttos":'', "pwAttos":''}
     config["Settings"] = {"timeout":10, "url": '', "isemailenabled": False, "iscsvenabled": True, "logfilepath": "C:/TimeLog.csv", "useheadless": False, "smtpport":587}
     with open("timeclocker_config.ini", "w") as configfile:
@@ -188,10 +188,11 @@ if __name__ == '__main__':
         subject = "Time booked!"
         body = selectText + "actually booked time: "+ actuallyBookedTime + ". Should have booked time: " + str(now)
 
-        if isEmailEnabled:
+        if isEmailEnabled == 'True':
             sendMail(subject, body)
     except Exception as ex:
-        sendMail("Time not booked!","Error:" + str(ex))
+        if isEmailEnabled == 'True':
+            sendMail("Time not booked!","Error:" + str(ex))
         print(ex)
         exit(1)
 
