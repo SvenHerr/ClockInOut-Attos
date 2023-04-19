@@ -163,8 +163,8 @@ def isCSVEmpty(f):
     return False
 
 def storeTimeToCSV():
-    global now
-    date = datetime.today()
+    global dateToday
+    dateToday = datetime.today()
     data = [date, selectText, actuallyBookedTime]
 
     with open(logFilePath, 'w', encoding='UTF8') as f:
@@ -242,7 +242,7 @@ if __name__ == '__main__':
 
         if isEmailEnabled == 'True':
             subject = "Time booked!"
-            body = selectText + "actually booked time: "+ actuallyBookedTime + ". Should have booked time: " + str(now)
+            body = selectText + "actually booked time: "+ actuallyBookedTime + ". Should have booked time: " + str(dateToday)
             sendMail(subject, body)
     except Exception as ex:
         if isEmailEnabled == 'True':
