@@ -156,16 +156,24 @@ def getOldVacationDays():
         return labelForOldVacationDays.text
     return "Not found!"
 
+def isCSVEmpty(f):
+    reader = csv.reader(f)
+    if len(reader) == 0:
+        return True
+    return False
+
 def storeTimeToCSV():
     global now
-    now = datetime.now()
-    header = ['Status', 'Actually booked Time', 'Booked Time']
-    data = [selectText, actuallyBookedTime, now]
+    date = datetime.today()
+    data = [date, selectText, actuallyBookedTime]
 
     with open(logFilePath, 'w', encoding='UTF8') as f:
         writer = csv.writer(f)
-        # write the header
-        writer.writerow(header)
+        
+        if isCSVEmpty(f) == 'True':
+            header = ['Booked Time', 'Status', 'Actually booked Time', ]
+            # write the header
+            writer.writerow(header)
         # write the data
         writer.writerow(data)
 
@@ -227,8 +235,9 @@ if __name__ == '__main__':
         else: 
             raise ValueError('No args')
         
+        getBookedTime()
+        print('Booked time:', actuallyBookedTime)
         if isCSVEnabled == 'True':
-            getBookedTime()
             storeTimeToCSV()        
 
         if isEmailEnabled == 'True':
