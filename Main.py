@@ -158,7 +158,7 @@ def getOldVacationDays():
 
 def isCSVEmpty(f):
     reader = csv.reader(f)
-    if len(reader) == 0:
+    if len(list(reader)) == 0:
         return True
     return False
 
