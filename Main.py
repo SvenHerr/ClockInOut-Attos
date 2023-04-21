@@ -43,6 +43,12 @@ else:
     with open("timeclocker_config.ini", "w") as configfile:
         config.write(configfile)
 
+errorNotFound = "Not found!"
+exceptionNoInputElements = "No input elements found!"
+exceptionNoArgsProvided = "No args provided!"
+salden = "salden"
+logout = "out"
+login = "in"
 
 def waitUnitElementIsVisible(by = By.ID, element = ''):
     return WebDriverWait(browser, timeout).until(EC.presence_of_element_located((by, element)))
@@ -72,7 +78,7 @@ def setInputElements():
     global inputElements
     inputElements = waitUnitElementsAreVisible(By.TAG_NAME, 'input')
     if inputElements == None: 
-        raise Exception("No input elements found!")
+        raise Exception(exceptionNoInputElements)
 
 def insertAccoutNumber():
     inputElements[0].send_keys(usenameAttos)
@@ -84,13 +90,13 @@ def setSelectElements():
     global selectedElements
     selectedElements = waitUnitElementsAreVisible(By.TAG_NAME, 'select')
     if selectedElements == None: 
-        raise Exception("No input elements found!")
+        raise Exception(exceptionNoInputElements)
 
 def setBookingTypeFromArgs():
     global selectText
-    if call == 'in':
+    if call == login:
         selectText = 'Kommen'
-    elif call == 'out':
+    elif call == logout:
         selectText = 'Gehen'
     else:
         selectText = ''
@@ -103,7 +109,7 @@ def setButtonElements():
     global buttonElements
     buttonElements = browser.find_elements(By.TAG_NAME, 'button')  
     if len(buttonElements) <= 1: 
-        raise Exception("No input elements found!")
+        raise Exception(exceptionNoInputElements)
 
 def clickSaldenButton():
     ActionChains(browser).click(buttonElements[1]).perform()
@@ -118,43 +124,43 @@ def getBookedTime():
     if labelForVerbuchteZeit is not None:
         actuallyBookedTime = labelForVerbuchteZeit.text
     else:
-        actuallyBookedTime ='error'
+        actuallyBookedTime = errorNotFound
 
 def getFlexTimeLabelName():
     flexTimeLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[1]/td[3]/div/span')
     if flexTimeLabel is not None:
         return flexTimeLabel.text
-    return "Not found!"
+    return errorNotFound
 
 def getFlexTime():
     labelForFlexTime = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[1]/td[5]/div/span')
     if labelForFlexTime is not None:
         return labelForFlexTime.text
-    return "Not found!"
+    return errorNotFound
 
 def getVacationDaysLabelName():
     vacationDaysLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[3]/td[3]/div/span')
     if vacationDaysLabel is not None:
         return vacationDaysLabel.text
-    return "Not found!"
+    return errorNotFound
 
 def getVacationDays():
     labelForVacationDays = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[3]/td[5]/div/span')
     if labelForVacationDays is not None:
         return labelForVacationDays.text
-    return "Not found!"
+    return errorNotFound
 
 def getOldVacationDaysLabelName():
     oldVacationDaysLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[5]/td[3]/div/span')
     if oldVacationDaysLabel is not None:
         return oldVacationDaysLabel.text
-    return "Not found!"
+    return errorNotFound
 
 def getOldVacationDays():
     labelForOldVacationDays = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[5]/td[5]/div/span')
     if labelForOldVacationDays is not None:
         return labelForOldVacationDays.text
-    return "Not found!"
+    return errorNotFound
 
 def fileExists():
     fileExists = os.path.exists(logFilePath)
@@ -207,7 +213,7 @@ if __name__ == '__main__':
             call = sys.argv[1]
         else:
             call =""
-            raise Exception("No args provided!")
+            raise Exception(exceptionNoArgsProvided)
     except Exception as ex:
         print(ex)
         exit(1)
@@ -223,15 +229,15 @@ if __name__ == '__main__':
         setBookingType()
         setButtonElements()
 
-        if call == 'salden':
+        if call == salden:
             clickSaldenButton()
             print(getFlexTimeLabelName() + " " + getFlexTime())
             print(getVacationDaysLabelName() + " " + getVacationDays())
             print(getOldVacationDaysLabelName() + " " + getOldVacationDays())
-        elif call == 'out' or call == 'in':
+        elif call == logout or call == login:
             clickAcceptButton()
         else: 
-            raise ValueError('No args')
+            raise ValueError(exceptionNoArgsProvided)
         
         getBookedTime()
         print('Booked time:', actuallyBookedTime)

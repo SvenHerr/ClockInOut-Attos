@@ -10,15 +10,13 @@ echo installing datetime
 pip install datetime
 echo Installing configparser
 pip install configparser
-
-#from selenium.webdriver.chrome.service import Service
-#from webdriver_manager.chrome import ChromeDriverManager
-#from selenium.webdriver.common.by import By
-#from selenium.webdriver.support.ui import Select
-#from selenium.webdriver import ActionChains
-#from selenium.webdriver.support.ui import WebDriverWait
-#import os
-#import smtplib
-#from email.mime.multipart import MIMEMultipart
-#from email.mime.text import MIMEText
-#import sys
+echo Installing smtplib
+pip install smtplib
+echo Installing MIMEText
+pip install MIMEText
+echo Installing MIMEMultipart
+pip install MIMEMultipart
+echo Installing WebDriverWait
+pip install WebDriverWait
+echo Installing Service
+pip install Service
