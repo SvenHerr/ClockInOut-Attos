@@ -20,8 +20,11 @@ import os
 
 # First create config if not exist
 config = configparser.ConfigParser()
+
+# Check if the configuration file exists
 if os.path.isfile(str(os.getcwd()) + "/timeclocker_config.ini"):
     config.read("timeclocker_config.ini")
+    # Read configuration values
     username = config["Mail-Setting"]["username"]
     password = config["Mail-Setting"]["password"]
     sender = config["Mail-Setting"]["sender"]
@@ -37,9 +40,12 @@ if os.path.isfile(str(os.getcwd()) + "/timeclocker_config.ini"):
     timeout = config["Settings"]["timeout"]
     useHeadless = config["Settings"]["useheadless"]
 else:
+    # Set default configuration values
     config["Mail-Setting"] = {"username":'', "password":'', "sender":'', "reciever":'', "smtpserver":'smtp.web.de'}
     config["Account-Settings"] = {"usenameAttos":'', "pwAttos":''}
     config["Settings"] = {"timeout":10, "url": '', "isemailenabled": False, "iscsvenabled": True, "logfilepath": "C:/TimeLog.csv", "useheadless": False, "smtpport":587}
+    
+    # Write the default configuration to the file
     with open("timeclocker_config.ini", "w") as configfile:
         config.write(configfile)
 
@@ -50,12 +56,15 @@ salden = "salden"
 logout = "out"
 login = "in"
 
+# Wait until an element is visible on the page
 def waitUnitElementIsVisible(by = By.ID, element = ''):
     return WebDriverWait(browser, timeout).until(EC.presence_of_element_located((by, element)))
 
+# Wait until multiple elements are visible on the page
 def waitUnitElementsAreVisible(by = By.ID, elements = ''):
     return WebDriverWait(browser, timeout).until(EC.presence_of_all_elements_located((by, elements)))
 
+# Connect to the website using Selenium WebDriver
 def connect():
     global browser
     #make headless for more convinient
@@ -70,28 +79,34 @@ def connect():
     browser.maximize_window()	
     browser.implicitly_wait(2)
 
+# Switch to the iframe containing the login form
 def switchToIframe():
     iframe_ref = waitUnitElementIsVisible(By.TAG_NAME, 'iframe')
     browser.switch_to.frame(iframe_ref)
 
+# Set the input elements on the page
 def setInputElements():
     global inputElements
     inputElements = waitUnitElementsAreVisible(By.TAG_NAME, 'input')
     if inputElements == None: 
         raise Exception(exceptionNoInputElements)
 
+# Insert the account number into the input field
 def insertAccoutNumber():
     inputElements[0].send_keys(usenameAttos)
 
+# Insert the password into the input field
 def insertPw():
     inputElements[1].send_keys(pwAttos)
 
+# Set the select elements on the page
 def setSelectElements():
     global selectedElements
     selectedElements = waitUnitElementsAreVisible(By.TAG_NAME, 'select')
     if selectedElements == None: 
         raise Exception(exceptionNoInputElements)
-
+    
+# Set the booking type based on the command line argument
 def setBookingTypeFromArgs():
     global selectText
     if call == login:
@@ -101,22 +116,27 @@ def setBookingTypeFromArgs():
     else:
         selectText = ''
 
+# Set the booking type in the select element
 def setBookingType():
     select = Select(selectedElements[0])
     select.select_by_visible_text(selectText)
 
+# Set the button elements on the page
 def setButtonElements():
     global buttonElements
     buttonElements = browser.find_elements(By.TAG_NAME, 'button')  
     if len(buttonElements) <= 1: 
         raise Exception(exceptionNoInputElements)
 
+# Click the "Salden" button to view balance information
 def clickSaldenButton():
     ActionChains(browser).click(buttonElements[1]).perform()
 
+# Click the "Accept" button to confirm the booking
 def clickAcceptButton():
     ActionChains(browser).click(buttonElements[0]).perform()
 
+# Get the booked time from the page
 def getBookedTime():
     labelForVerbuchteZeit = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[1]/td/div/div/table/tbody/tr[5]/td[3]/div')
     
@@ -126,46 +146,54 @@ def getBookedTime():
     else:
         actuallyBookedTime = errorNotFound
 
+# Get the label name for the flex time
 def getFlexTimeLabelName():
     flexTimeLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[1]/td[3]/div/span')
     if flexTimeLabel is not None:
         return flexTimeLabel.text
     return errorNotFound
 
+# Get the flex time from the page
 def getFlexTime():
     labelForFlexTime = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[1]/td[5]/div/span')
     if labelForFlexTime is not None:
         return labelForFlexTime.text
     return errorNotFound
 
+# Get the label name for the vacation days
 def getVacationDaysLabelName():
     vacationDaysLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[3]/td[3]/div/span')
     if vacationDaysLabel is not None:
         return vacationDaysLabel.text
     return errorNotFound
 
+# Get the vacation days from the page
 def getVacationDays():
     labelForVacationDays = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[3]/td[5]/div/span')
     if labelForVacationDays is not None:
         return labelForVacationDays.text
     return errorNotFound
 
+# Get the label name for the old vacation days
 def getOldVacationDaysLabelName():
     oldVacationDaysLabel = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[5]/td[3]/div/span')
     if oldVacationDaysLabel is not None:
         return oldVacationDaysLabel.text
     return errorNotFound
 
+# Get the old vacation days from the page
 def getOldVacationDays():
     labelForOldVacationDays = waitUnitElementIsVisible(By.XPATH, '/html/body/div/form/div/div/div/div[1]/div/div/table/tbody/tr[2]/td/div/div/table/tbody/tr[3]/td/div/div/table/tbody/tr[5]/td/div/div/table/tbody/tr[5]/td[5]/div/span')
     if labelForOldVacationDays is not None:
         return labelForOldVacationDays.text
     return errorNotFound
 
+# Check if the log file already exists
 def fileExists():
     fileExists = os.path.exists(logFilePath)
     return fileExists
 
+# Store the booked time to a CSV file
 def storeTimeToCSV():
     global dateToday
     dateToday = datetime.today()
@@ -181,9 +209,11 @@ def storeTimeToCSV():
         # write the data
         writer.writerow(data)
 
+# Quit the browser session
 def quit():
     browser.quit()
 
+# Send an email
 def sendMail(subject, body):
     msg = MIMEMultipart()
     msg['Subject'] = subject
@@ -192,14 +222,14 @@ def sendMail(subject, body):
     part = MIMEText(body, 'plain')
     msg.attach(part)
 
-    # Erzeugen einer Mail Session
+    # Create a Mail Session
     smtpObj = smtplib.SMTP(smtpServer, smtpPort)
-    # Debuginformationen auf der Konsole ausgeben
+    # Print debug information
     smtpObj.set_debuglevel(1)
-    # Wenn der Server eine Authentifizierung benötigt dann...
+    # If the server requires authentication
     smtpObj.starttls()
     smtpObj.login(username, password)
-    # absenden der E-Mail
+    # Send the email
     smtpObj.sendmail(sender, reciever, msg.as_string())
 
 
