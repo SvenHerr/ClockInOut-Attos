@@ -5,6 +5,8 @@ Also after execution, it stores your login/logout time in a CSV sheet.<br>
 :loud_sound: Insert in the timeclocker_config.ini your account data and URL.
 Run the install script
 
+<a href="https://github.com/SvenHerr/ClockInOut-Attos/wiki/Documentation-for-the-Code">Developer documentation here.</a>
+
 Start with batch script or powershell.
 You need to give one arg that represents the call that the script should do.
 possible args are: in, out, salden.
@@ -57,4 +59,6 @@ Now you can use it with double click on the desired file.
 - configparser
 - csv
 - os
-- Chrome WebDriver (automatically managed by webdriver_manager)
+- Chrome WebDriver (automatically managed by webdriver_manager)+
+
+
